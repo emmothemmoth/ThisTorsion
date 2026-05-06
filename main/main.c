@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <math.h>
+#include <stdatomic.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "driver/i2s_std.h"
@@ -10,7 +11,6 @@
 #define SINE_FREQ_HZ 440.0f 
 #define PI 3.14159265359f
 
-
 #define I2S_BCK_IO 10
 #define I2S_WS_IO  11  
 #define I2S_DO_IO  13  
@@ -18,9 +18,9 @@
 #define DRIVE_POT_CHAN ADC_CHANNEL_4 
 
 
-volatile float global_vol_mult = 0.5f;   
-volatile float global_drive_mult = 1.0f; 
-volatile bool system_running = true;
+_Atomic float global_vol_mult = ATOMIC_VAR_INIT(0.5f);
+_Atomic float global_drive_mult = ATOMIC_VAR_INIT(1.0f);
+_Atomic bool system_running = true;
 
 void control_knob_task(void *pvParameters) 
 {
@@ -135,6 +135,7 @@ void app_main(void)
     vTaskDelay(pdMS_TO_TICKS(1000));
     printf("System Shutdown Complete.\n");
 }
+
 //void app_main(void)
 //{
 //
